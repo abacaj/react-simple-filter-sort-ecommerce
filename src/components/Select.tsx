@@ -3,7 +3,7 @@ interface SelectOption {
   value: string;
 }
 
-export default function SelectMenu({
+export default function Select({
   options,
   label,
   name,

@@ -5,3 +5,5 @@ export type Item = {
   category: string;
   src: string;
 };
+
+export type ItemSort = 'name' | 'priceAsc' | 'priceDesc';

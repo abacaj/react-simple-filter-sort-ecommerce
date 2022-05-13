@@ -3,7 +3,7 @@ import SearchBar from 'components/SearchBar';
 import RangeSlider from 'components/RangeSlider';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { CheckIcon } from '@radix-ui/react-icons';
-import SelectMenu from 'components/SelectMenu';
+import Select from 'components/Select';
 import { getUniqueItems } from 'core/utils';
 import CollapsibleList from 'components/CollapsibleList';
 import axios from 'axios';
@@ -61,7 +61,7 @@ export default function Root() {
           <SearchBar />
         </div>
 
-        <SelectMenu
+        <Select
           label="Sort by"
           name="sort"
           options={[
