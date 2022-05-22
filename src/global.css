@@ -22,8 +22,12 @@ body {
 }
 
 .btn {
-  border: none;
   cursor: pointer;
+}
+
+.absolute-center-y {
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .item-grid {

@@ -1,4 +1,4 @@
-export type Item = {
+export type Product = {
   name: string;
   color: string;
   price: number;
@@ -6,4 +6,9 @@ export type Item = {
   src: string;
 };
 
-export type ItemSort = 'name' | 'priceAsc' | 'priceDesc';
+export type ProductRespone = {
+  products: Product[];
+  maxPrice: number;
+};
+
+export type ProductSort = 'name' | 'priceAsc' | 'priceDesc';

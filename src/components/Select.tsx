@@ -7,14 +7,23 @@ export default function Select({
   options,
   label,
   name,
+  defaultValue = '',
+  onChange,
 }: {
   options: SelectOption[];
   label: string;
   name: string;
+  defaultValue?: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }) {
   return (
     <div>
-      <select name={name} defaultValue="" className="select ph2 pv1 br2 bn">
+      <select
+        onChange={onChange}
+        name={name}
+        defaultValue={defaultValue}
+        className="select ph2 pv1 br2 bn"
+      >
         <option value="" disabled>
           {label}
         </option>

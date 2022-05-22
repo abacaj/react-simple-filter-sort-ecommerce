@@ -1,43 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import SearchBar from 'components/SearchBar';
-import RangeSlider from 'components/RangeSlider';
-import * as Checkbox from '@radix-ui/react-checkbox';
-import { CheckIcon } from '@radix-ui/react-icons';
 import Select from 'components/Select';
-import { getUniqueItems } from 'core/utils';
-import CollapsibleList from 'components/CollapsibleList';
-import axios from 'axios';
-import { useEffect } from 'react';
-import { Item } from 'core/types';
-
-function useItems(filters: URLSearchParams | null) {
-  const [loading, setLoading] = useState(true);
-  const [items, setData] = useState<Array<Item>>([]);
-
-  useEffect(() => {
-    axios
-      .get('http://localhost:3001/items' + (filters ? `?${filters}` : ''))
-      .then((res) => {
-        setLoading(false);
-        setData(res.data);
-      });
-  }, [filters]);
-
-  return { loading, items };
-}
+import { useItems } from 'core/hooks';
+import ItemsContainer from 'components/ItemsContainer';
+import { useSearchParams } from 'react-router-dom';
+import ColorFilters from 'components/ColorFilters';
+import PriceFilter from 'components/PriceFilter';
 
 export default function Root() {
-  const [query, setQuery] = useState<URLSearchParams | null>(null);
-  const { items } = useItems(query);
-  const groupedItems = useMemo(
-    () =>
-      getUniqueItems(items, 'color').map((item) => ({
-        label: item.color,
-        name: item.color,
-        value: item.color,
-      })),
-    [items],
-  );
+  const [search, setSearch] = useSearchParams();
+  const getItems = useItems();
+  const items = useMemo(() => getItems.data?.products ?? [], [getItems.data]);
   const itemCounts = useMemo(
     () =>
       items.reduce<Record<string, number>>((initial, item) => {
@@ -51,6 +24,7 @@ export default function Root() {
       }, {}),
     [items],
   );
+  const maxPrice = (getItems.data?.maxPrice ?? 0) / 100;
 
   return (
     <div className="mw9 center ph4 bg-white min-vh-100 br bl b--light-gray">
@@ -62,6 +36,12 @@ export default function Root() {
         </div>
 
         <Select
+          onChange={(e) => {
+            search.set('sort', e.target.value);
+            setSearch(search, {
+              replace: true,
+            });
+          }}
           label="Sort by"
           name="sort"
           options={[
@@ -71,11 +51,11 @@ export default function Root() {
             },
             {
               label: 'Price High',
-              value: 'priceAsc',
+              value: 'priceDesc',
             },
             {
               label: 'Price Low',
-              value: 'priceDesc',
+              value: 'priceAsc',
             },
           ]}
         />
@@ -92,86 +72,31 @@ export default function Root() {
                 </div>
               </li>
               <li>
-                <button className="btn fw5 pa0 pv2 w-100 tl bg-transparent hover-light-purple flex justify-between">
+                <button className="btn bn fw5 pa0 pv2 w-100 tl bg-transparent hover-light-purple flex justify-between">
                   Bags
-                  <span>{itemCounts['bags']}</span>
+                  <span>{itemCounts['bags'] ?? 0}</span>
                 </button>
               </li>
               <li>
-                <button className="btn fw5 pa0 pv2 w-100 tl bg-transparent hover-light-purple flex justify-between">
+                <button className="btn bn fw5 pa0 pv2 w-100 tl bg-transparent hover-light-purple flex justify-between">
                   Shoes
-                  <span>{itemCounts['shoes']}</span>
+                  <span>{itemCounts['shoes'] ?? 0}</span>
                 </button>
               </li>
               <li>
-                <button className="btn fw5 pa0 pv2 w-100 tl bg-transparent hover-light-purple flex justify-between">
+                <button className="btn bn fw5 pa0 pv2 w-100 tl bg-transparent hover-light-purple flex justify-between">
                   Jackets
-                  <span>{itemCounts['jackets']}</span>
+                  <span>{itemCounts['jackets'] ?? 0}</span>
                 </button>
               </li>
             </ul>
 
-            <CollapsibleList title="Color">
-              {groupedItems.map((field, key) => (
-                <li key={key} className="pv2">
-                  <div className="flex items-center">
-                    <Checkbox.Root
-                      id={field.name}
-                      name={field.name}
-                      className="checkbox lh-solid flex items-center justify-center pa0 bg-white w125 h125 br2 bn"
-                    >
-                      <Checkbox.Indicator>
-                        <CheckIcon className="checkbox__icon w125 h125" />
-                      </Checkbox.Indicator>
-                    </Checkbox.Root>
-                    <label htmlFor={field.name} className="ml3 fw5 f5">
-                      {field.label}
-                    </label>
-                  </div>
-                </li>
-              ))}
-            </CollapsibleList>
-            <CollapsibleList title="Price">
-              <li>
-                <div className="mv2">
-                  <RangeSlider
-                    maxPrice={Math.max(
-                      ...items.map((item) => item.price / 100),
-                    )}
-                  />
-                </div>
-              </li>
-            </CollapsibleList>
+            <ColorFilters />
+            <PriceFilter maxPrice={maxPrice} />
           </div>
         </div>
 
-        <div className="w-75">
-          <div className="flex flex-wrap item-grid pt2">
-            {items.map((item, key) => {
-              return (
-                <div key={item.name} className="w-100 w-50-l ph3">
-                  <a className="link black hover-light-purple" href="/t">
-                    <div className="flex flex-column h-100">
-                      <img
-                        style={{ objectFit: 'cover', height: '420px' }}
-                        alt=""
-                        loading="lazy"
-                        className="img flex-auto bg-gray"
-                        src={item.src}
-                      />
-
-                      <div className="pt3 pb5 flex flex-column">
-                        <b className="mb1">{item.name}</b>
-                        <i className="mb3 gray">{item.color}</i>
-                        <p className="ma0 b black">${item.price / 100}</p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <ItemsContainer />
       </div>
     </div>
   );
