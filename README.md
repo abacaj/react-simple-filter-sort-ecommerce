@@ -1,4 +1,6 @@
-# Repo for video: (React JS filter, search and sort items using react-router v6)[https://youtu.be/c3WSziz_u_o]
+# Repo for video
+
+[React JS filter, search and sort items using react-router v6](https://youtu.be/c3WSziz_u_o)
 
 1. run yarn install
 2. run yarn server
