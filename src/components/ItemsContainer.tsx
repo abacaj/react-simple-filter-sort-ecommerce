@@ -31,7 +31,7 @@ export default function ItemsContainer() {
 
                   <div className="pt3 pb5 flex flex-column">
                     <b className="mb1">{product.name}</b>
-                    <i className="mb3 gray">{product.color}</i>
+                    <i className="mb3 gray">{product.color.join(', ')}</i>
                     <p className="ma0 b black">${product.price / 100}</p>
                   </div>
                 </div>

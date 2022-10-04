@@ -1,13 +1,15 @@
-export function getUniqueItems<T extends Record<string, any>>(
-  items: T[],
-  key: keyof T,
-): Array<T> {
-  const dedupe: Record<any, T> = {};
+export function getUniqueValues<T, V>(items: V[], key: keyof V): Array<T> {
+  const set: Set<T> = new Set();
 
   items.forEach((item) => {
-    if (dedupe[key]) return;
-    dedupe[item[key]] = item;
+    const value = item[key];
+
+    if (Array.isArray(value)) {
+      value.forEach((v: T) => set.add(v));
+    } else {
+      set.add(value as unknown as T);
+    }
   });
 
-  return Object.values(dedupe);
+  return Array.from(set);
 }

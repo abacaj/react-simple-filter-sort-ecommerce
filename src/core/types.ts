@@ -1,6 +1,6 @@
 export type Product = {
   name: string;
-  color: string;
+  color: string[];
   price: number;
   category: string;
   src: string;

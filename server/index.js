@@ -9,15 +9,34 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+function containsColors(colors, product) {
+  // base case, do not skip products when there are no color filters
+  if (!colors) return true;
+
+  const selectedColors = new Set(colors.split(','));
+  const productColors = product.color;
+
+  // check if any of the product colors are in the filter
+  for (const color of productColors) {
+    if (selectedColors.has(color)) {
+      return true;
+    }
+  }
+
+  // does not contain any of the filtered colors, skip this product
+  return false;
+}
+
 function applyFilters(products, { query, sort, colors, minPrice, maxPrice }) {
   const filteredProducts = [];
 
+  // skip products based on filters
   for (const product of products) {
     if (query && !product.name.toLowerCase().includes(query.toLowerCase())) {
       continue;
     }
 
-    if (colors && !colors.split(',').includes(product.color)) {
+    if (!containsColors(colors, product)) {
       continue;
     }
 

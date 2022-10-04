@@ -4,12 +4,14 @@ export default function CollapsibleList({
   title,
   children,
   actionButton,
+  defaultVisible,
 }: {
   title: string;
   children: React.ReactNode;
   actionButton?: React.ReactNode;
+  defaultVisible?: boolean;
 }) {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(defaultVisible);
 
   return (
     <div className="pv4 bb b--black-10">
